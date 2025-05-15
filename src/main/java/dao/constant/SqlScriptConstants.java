@@ -26,4 +26,41 @@ public class SqlScriptConstants {
             SELECT * FROM product WHERE name LIKE ?
             """;
 
+    public static final String USER_SAVE= """
+            INSERT INTO users (user_name,password,role,active)
+            VALUES(?,?,?,?)
+            """;
+    public static final String USER_FIND_BY_NAME= """
+            SELECT * FROM users WHERE user_name = ?
+            """;
+
+    public static final String PRODUCT_SAVE = """
+            INSERT INTO product(name,price,stock,category_id,created_by,updated_by)
+            VALUES(?,?,?,?,?,?)
+            """;
+    public static final String CATEGORY_SAVE = """
+            INSERT INTO category (name, created_by, updated_by)
+            VALUES(?,?,?)
+            """;
+    public static final String CATEGORY_DELETE = """
+            DELETE FROM category WHERE id = ?
+            """;
+    public static final String CATEGORY_FIND_BY_ID = """
+            SELECT * FROM category WHERE id = ?
+            """;
+    public static final String CATEGORY_FIND_ALL = """
+            SELECT * FROM category
+            """;
+    public static final String PRODUCT_FIND_ALL = """
+            SELECT p.id as id,
+            p.name as name,
+            p.price as price,
+            p.stock as stock,
+            c.id as category_id,
+            c.name as category_name
+            FROM product p, category c WHERE p.category_id=c.id
+            """;
+    public static final String PRODUCT_DELETE = """
+            DELETE FROM product WHERE id = ?
+            """ ;
 }

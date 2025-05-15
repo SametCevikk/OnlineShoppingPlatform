@@ -67,6 +67,16 @@ created_date date default current_date,
 updated_date date default current_date
 );
 
+CREATE TABLE users(
+id SERIAL PRIMARY KEY,
+user_name varchar(255) unique not null ,
+password varchar(255) NOT NULL,
+role varchar(100),
+active boolean default true 
+)
+
+SELECT * FROM users;
+
 SELECT * FROM customer;]]></console>
       <console name="Connection " type="STANDARD" schema="online_store" session="Main" />
     </connection>

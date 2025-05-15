@@ -3,7 +3,7 @@ package service;
 import dao.PaymentDAO;
 import model.Order;
 import model.Payment;
-import model.PaymentMethod;
+import model.enums.PaymentMethod;
 
 
 public class PaymentService {

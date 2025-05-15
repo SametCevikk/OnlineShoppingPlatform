@@ -34,6 +34,7 @@ public class CustomerDAO implements BaseDAO<Customer> {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
+                customer=new Customer();
                 customer.setId(rs.getLong("id"));
                 customer.setName(rs.getString("name"));
                 customer.setEmail(rs.getString("email"));
