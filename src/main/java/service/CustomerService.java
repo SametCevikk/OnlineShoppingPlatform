@@ -26,7 +26,7 @@ public class CustomerService {
         System.out.println("Register successful");
     }
 
-    public void login(String email, String password) throws OnlineStoreException {
+    public Customer login(String email, String password) throws OnlineStoreException {
 
         boolean isExist = customerDAO.existEmail(email);
 
@@ -44,5 +44,6 @@ public class CustomerService {
                 System.out.println("Login successful");
             }
         }
+        return foundedCustomer;
     }
 }

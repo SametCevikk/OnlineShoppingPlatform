@@ -1,6 +1,7 @@
 import exception.ExceptionMassagesConstant;
 import exception.OnlineStoreException;
 import model.Category;
+import model.Customer;
 import model.Product;
 import model.User;
 import model.enums.Role;
@@ -10,12 +11,14 @@ import service.ProductService;
 import service.UserService;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class OnlineStoreApplication {
 
     private static User LOGGED_IN_USER;
+    private static Customer LOGGED_IN_CUSTOMER;
     private static final Scanner scanner = new Scanner(System.in);
     private static final UserService userService = new UserService();
     private static final CategoryService categoryService = new CategoryService();
@@ -136,7 +139,9 @@ public class OnlineStoreApplication {
             System.out.println("Please press 4 to product create");
             System.out.println("Please press 5 to product list");
             System.out.println("Please press 6 to product delete");
-            System.out.println("Please press 7 to order list");
+            System.out.println("Please press 7 to product search");
+            System.out.println("Please press 8 to product filter (with category)");
+            System.out.println("Please press 9 to order list");
             System.out.println("Please press 0 to return main menu");
             System.out.print("Your choice: ");
             String choice = scanner.nextLine();
@@ -162,6 +167,12 @@ public class OnlineStoreApplication {
                     deleteProduct();
                     break;
                 case "7":
+                    productSearch();
+                    break;
+                case "8":
+                    productFilter();
+                    break;
+                case "9":
                     listOrder();
                     break;
                 case "0":
@@ -173,6 +184,33 @@ public class OnlineStoreApplication {
         }
     }
 
+    private static void productFilter() {
+        System.out.print("Enter the category name ");
+        String categoryName=scanner.nextLine();
+
+       List<Product> products = productService.getAllByCategoryName(categoryName);
+
+        System.out.println("\n**** Product List (Filter result) ****");
+        products.forEach(product -> System.out.printf("%s - %s - %s\n", product.getName(), product.getPrice(), product.getStock()));
+
+        System.out.println("********");
+    }
+
+    private static void productSearch() throws OnlineStoreException {
+
+        System.out.print("Enter the product name ");
+        String productName=scanner.nextLine();
+        List<Product>   products = productService.productSearchByName(productName);
+
+        System.out.println("\n**** Product List (Search result) ****");
+        products.forEach(product -> System.out.printf("%s - %s - %s\n", product.getName(), product.getPrice(), product.getCategory().getName()));
+
+        System.out.println("********");
+    }
+
+    private static void createOrder(){
+
+    }
 
     private static void listOrder() {
     }
@@ -184,8 +222,20 @@ public class OnlineStoreApplication {
     }
 
     private static void listProduct() {
-        List<Product> products = productService.getAll();
-        products.forEach(product -> System.out.printf("%s : %d : %s", product.getName(), product.getPrice(), product.getCategory().getName()));
+
+        int totalPage = productService.getTotalPage();
+        int page = 1;
+        List<Product> products = productService.getAll(page);
+        do{
+            System.out.println("\n**** Product List (Page) " + page + "/" + totalPage + " ****");
+            products.forEach(product -> System.out.printf("%s - %s - %s\n", product.getName(), product.getPrice(), product.getCategory().getName()));
+            System.out.println("*******");
+            System.out.print("Next page number: ");
+            String pageStr =scanner.nextLine();
+            page = Integer.parseInt(pageStr);
+
+        }while (page <= totalPage);
+
     }
 
     private static void createProduct() throws OnlineStoreException {
@@ -242,7 +292,40 @@ public class OnlineStoreApplication {
         String password = scanner.nextLine();
 
         CustomerService customerService = new CustomerService();
-        customerService.login(email, password);
+        LOGGED_IN_CUSTOMER = customerService.login(email, password);
+
+        while (true){
+            System.out.println("Please press 1 to product list");
+            System.out.println("Please press 2 to product search");
+            System.out.println("Please press 3 to product filter (with category)");
+            System.out.println("Please press 4 to create order");
+            System.out.println("Please press 5 to order list");
+            System.out.println("Please press 0 to return main menu");
+            System.out.print("Your choice: ");
+            String choice = scanner.nextLine();
+
+            switch (choice){
+                case "1":
+                    listProduct();
+                    break;
+                case "2":
+                    productSearch();
+                    break;
+                case "3":
+                    productFilter();
+                    break;
+                case "4":
+                    createOrder();
+                    break;
+                case "5":
+                    listOrder();
+                case "0":
+                    return;
+                default:
+                    System.out.println("Invalid selection");
+            }
+        }
+
     }
 
     private static void saveCustomer() throws OnlineStoreException {

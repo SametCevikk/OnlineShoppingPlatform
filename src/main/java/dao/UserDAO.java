@@ -33,7 +33,7 @@ public class UserDAO implements BaseDAO<User> {
     }
 
     @Override
-    public List<User> findAll() {
+    public List<User> findAll(int page) {
         return null;
     }
 

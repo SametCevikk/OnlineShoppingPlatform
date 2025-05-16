@@ -2,6 +2,8 @@ package exception;
 
 public class ExceptionMassagesConstant {
 
+    public static final String PRODUCT_NOT_FOUND = "Product is not found" ;
+
     private ExceptionMassagesConstant(){
     }
 

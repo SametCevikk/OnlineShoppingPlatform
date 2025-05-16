@@ -49,7 +49,7 @@ public class CategoryDAO implements BaseDAO<Category> {
         return category;
     }
         @Override
-    public List<Category> findAll() {
+    public List<Category> findAll(int page) {
         List<Category> categoryList = new ArrayList<>();
             Category category=null;
             try (Connection connection = DBUtil.getConnection()) {

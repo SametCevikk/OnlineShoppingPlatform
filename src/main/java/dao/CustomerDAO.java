@@ -48,7 +48,7 @@ public class CustomerDAO implements BaseDAO<Customer> {
         return customer;
     }
 
-    public List<Customer> findAll() {
+    public List<Customer> findAll(int page) {
         List<Customer> customers = new ArrayList<>();
 
         try(Connection connection = DBUtil.getConnection()){

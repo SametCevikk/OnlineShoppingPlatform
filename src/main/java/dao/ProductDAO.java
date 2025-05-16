@@ -1,5 +1,6 @@
 package dao;
 
+import dao.constant.OnlineStoreConstants;
 import dao.constant.SqlScriptConstants;
 import model.Category;
 import model.Product;
@@ -18,17 +19,15 @@ public class ProductDAO implements BaseDAO<Product> {
         try(Connection connection = DBUtil.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(SqlScriptConstants.PRODUCT_SEARCH_BY_NAME_SCRIPT);
             ps.setString(1,"%" + name + "%");
-            ResultSet resultSet = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
 
-            while(resultSet.next()){
-                Product product = new Product();
-                product.setId(resultSet.getLong("id"));
-                product.setName(resultSet.getString("name"));
-                product.setPrice(resultSet.getBigDecimal("price"));
-                product.setStock(resultSet.getInt("stock"));
-                product.setCreatedDate(LocalDateTime.parse(resultSet.getString("created_date")));
-                product.setUpdatedDate(LocalDateTime.parse(resultSet.getString("updated_date")));
-                products.add(product);
+            while(rs.next()){
+                products.add(new Product(rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getBigDecimal("price"),
+                        rs.getInt("stock"),
+                        new Category(rs.getLong("category_id"), rs.getString("category_name"))));
+
             }
 
         } catch (SQLException e) {
@@ -62,11 +61,15 @@ public class ProductDAO implements BaseDAO<Product> {
     }
 
     @Override
-    public List<Product> findAll() {
+    public List<Product> findAll(int page) {
         List<Product> products = new ArrayList<>();
         try(Connection connection=DBUtil.getConnection()) {
-            Statement stmt = connection.createStatement();
-            ResultSet rs  = stmt.executeQuery(SqlScriptConstants.PRODUCT_FIND_ALL);
+            PreparedStatement ps = connection.prepareStatement(SqlScriptConstants.PRODUCT_FIND_ALL);
+            int size=OnlineStoreConstants.PAGE_SIZE;
+            int offset = (page-1) * size;
+            ps.setInt(1, size);
+            ps.setInt(2, offset);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()){
                 products.add(new Product(rs.getLong("id"),
                         rs.getString("name"),
@@ -79,7 +82,7 @@ public class ProductDAO implements BaseDAO<Product> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        return products;
     }
 
     @Override
@@ -96,5 +99,40 @@ public class ProductDAO implements BaseDAO<Product> {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public int findTotalPage() {
+        try(Connection connection=DBUtil.getConnection()) {
+            Statement stmt = connection.createStatement();
+          ResultSet rs =  stmt.executeQuery(SqlScriptConstants.GET_TOTAL_PAGE_COUNT);
+            if(rs.next()){
+                int totalRows = rs.getInt(1);
+                return (int) Math.ceil((double) totalRows/OnlineStoreConstants.PAGE_SIZE);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Product> findAllByCategoryName(String categoryName) {
+        List<Product> products = new ArrayList<>();
+        try(Connection connection=DBUtil.getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(SqlScriptConstants.PRODUCT_FIND_BY_CATEGORY_NAME);
+            ps.setString(1,categoryName);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                products.add(new Product(rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getBigDecimal("price"),
+                        rs.getInt("stock"),
+                        new Category(rs.getLong("category_id"), rs.getString("category_name"))));
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
     }
 }

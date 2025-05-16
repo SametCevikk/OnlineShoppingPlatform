@@ -22,10 +22,18 @@ public class SqlScriptConstants {
             INSERT INTO payment (order_id, payment_method, amount)
             VALUES(?,?,?)
             """;
-    public static final String PRODUCT_SEARCH_BY_NAME_SCRIPT= """
-            SELECT * FROM product WHERE name LIKE ?
-            """;
 
+    public static final String PRODUCT_SEARCH_BY_NAME_SCRIPT = """
+            SELECT p.id as id,
+            p.name as name,
+            p.price as price,
+            p.stock as stock,
+            c.id as category_id,
+            c.name as category_name
+            FROM product p
+            LEFT JOIN category c ON c.id=p.category_id
+            WHERE p.name LIKE ?
+            """;
     public static final String USER_SAVE= """
             INSERT INTO users (user_name,password,role,active)
             VALUES(?,?,?,?)
@@ -59,8 +67,24 @@ public class SqlScriptConstants {
             c.id as category_id,
             c.name as category_name
             FROM product p, category c WHERE p.category_id=c.id
+            ORDER BY p.id asc
+            LIMIT ? OFFSET ?
             """;
     public static final String PRODUCT_DELETE = """
             DELETE FROM product WHERE id = ?
+            """ ;
+    public static final String GET_TOTAL_PAGE_COUNT = """
+            SELECT COUNT(*) FROM product
+            """;
+    public static final String PRODUCT_FIND_BY_CATEGORY_NAME = """
+            SELECT p.id as id,
+            p.name as name,
+            p.price as price,
+            p.stock as stock,
+            c.id as category_id,
+            c.name as category_name
+            FROM product p
+            JOIN category c ON c.id=p.category_id
+            WHERE c.name = ?
             """ ;
 }

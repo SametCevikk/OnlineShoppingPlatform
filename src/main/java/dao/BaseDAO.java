@@ -9,7 +9,7 @@ public interface BaseDAO<T> {
 
     T findById(long id);
 
-    List<T> findAll();
+    List<T> findAll(int page);
 
     void update(T t);
 

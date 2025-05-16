@@ -27,7 +27,7 @@ public class CategoryService {
     }
 
     public List<Category> getAll() {
-        return categoryDAO.findAll();
+        return categoryDAO.findAll(5);
     }
 
     public void deleteById(long id) {
@@ -36,11 +36,11 @@ public class CategoryService {
     }
 
     public Category getById(long categoryId) throws OnlineStoreException {
-        Category foundedCatogory = categoryDAO.findById(categoryId);
-        if (foundedCatogory == null) {
+        Category foundedCategory = categoryDAO.findById(categoryId);
+        if (foundedCategory == null) {
         throw new OnlineStoreException(ExceptionMassagesConstant.CATEGORY_NOT_FOUND);
         }
-        System.out.println("Category founded : " + foundedCatogory);
-        return foundedCatogory;
+        System.out.println("Category founded : " + foundedCategory);
+        return foundedCategory;
     }
 }
